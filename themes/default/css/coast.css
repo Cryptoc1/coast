@@ -13,35 +13,44 @@ html, body {
     text-rendering: optimizeLegibility;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
     background-color: rgba(250, 250, 250, .85);
+    overflow: hidden;
 }
 body {
     font-size: 12pt;
 }
 .nav {
     width: 100%;
-    padding: 8pt 0 8pt 0;
+    max-height: 34px;
+    height: 34px;
+    padding: 8px 0 8px 0;
     /*background-color: rgba(3, 169, 244, .85);*/
-    background-color: #757575;
+    background-color: #CFD8DC;
     text-align: center;
+    z-index: 2;
+    position: fixed;
+    top: 0;
+    left: 0;
     box-shadow: 0px 2px 6px #BDBDBD;
 }
 .nav .omni {
     width: 60%;
-    height: 10%;
     border: none;
     outline: none;
     border-radius: 3px;
     font-size: 12pt;
     padding: 6pt 12pt 6pt 12pt;
-    box-shadow: 0px 2px 6px #9E9E9E;
+    box-shadow: 0px 2px 6px #BDBDBD;
     text-align: center;
     font-weight: 500;
     color: rgba(54, 54, 54, .94) !important;
 }
 .nav .omni::-webkit-input-placeholder {
+    letter-spacing: 1pt;
     color: rgba(96, 96, 96, .6);
 }
 webview {
+    position: fixed;
+    top: 50px;
     width: 100%;
-    height: 90%;
+    z-index: 1;
 }

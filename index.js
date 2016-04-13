@@ -19,10 +19,12 @@ app.on('ready', function() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         title: 'Coast :: Surfs Up',
-        titleBarStyle: 'hidden',
+        titleBarStyle: 'hidden-inset',
         backgroundColor: '#FAFAFA',
         width: 1000,
-        height: 600
+        height: 600,
+        minWidth: 800,
+        minHeight: 480
     })
 
     // and load the index.html of the app.
