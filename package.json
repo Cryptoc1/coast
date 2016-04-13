@@ -1,0 +1,25 @@
+{
+  "name": "coast",
+  "version": "1.0.0",
+  "description": "a minimal browser written using electron",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cryptoc1/coast.git"
+  },
+  "keywords": [
+    "browser"
+  ],
+  "author": "Samuel Steele <steelesam72@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cryptoc1/coast/issues"
+  },
+  "homepage": "https://github.com/cryptoc1/coast#readme",
+  "dependencies": {
+    "electron": "^0.4.1"
+  }
+}
