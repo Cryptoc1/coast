@@ -18,7 +18,10 @@ app.on('window-all-closed', function() {
 app.on('ready', function() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 800,
+        title: 'Coast :: Surfs Up',
+        titleBarStyle: 'hidden',
+        backgroundColor: '#FAFAFA',
+        width: 1000,
         height: 600
     })
 

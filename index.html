@@ -4,19 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href="themes/default/css/coast.css" rel="stylesheet">
+    <script src="lib/coast.js"></script>
 </head>
 
 <body>
-    <h1>Hello World!</h1> We are using node
-    <script>
-        document.write(process.versions.node)
-    </script>, Chrome
-    <script>
-        document.write(process.versions.chrome)
-    </script>, and Electron
-    <script>
-        document.write(process.versions.electron)
-    </script>.
+    <div class="nav">
+        <input class="omni" name="omni" type="text" placeholder="new tab">
+    </div>
+    <webview id="webview" autosize></webview>
 </body>
 
 </html>
