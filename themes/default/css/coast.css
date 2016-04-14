@@ -80,7 +80,11 @@ coast-tab {
     font-size: 10pt;
     transition: all .45s;
 }
-coast-tab a.fa {
+coast-tab a {
+    text-decoration: none;
+    color: inherit;
+}
+coast-tab a {
     font-weight: 100;
     opacity: .65;
     visibility: hidden;
@@ -91,7 +95,7 @@ coast-tab .title {
 coast-tab[active="true"] {
     background-color: #CFD8DC;
 }
-coast-tab[active="true"] a.fa {
+coast-tab[active="true"] a {
     visibility: visible;
 }
 views {
