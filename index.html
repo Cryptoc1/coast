@@ -5,15 +5,21 @@
     <meta charset="UTF-8">
     <title>Hello World!</title>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet">
     <link href="themes/default/css/coast.css" rel="stylesheet">
     <script src="lib/coast.js"></script>
 </head>
 
 <body>
     <div class="navigation-bar">
-        <input class="omnibar" type="text" placeholder="coast:new-tab" coast-original-url="coast:new-tab" coast-url-host="coast:new-tab" coast-page-title="New Tab" secure="">
+        <input class="omnibar" type="text">
+        <br>
+        <coast-tabs>
+            <!-- <tab><span class="fa fa-close"></span><span class="title">coast:new-tab</span></tab> -->
+        </coast-tabs>
     </div>
-    <webview autosize></webview>
+    <views>
+    </views>
 </body>
 
 </html>
