@@ -5,11 +5,21 @@
     <title>Coast Settings</title>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
     <script src="preferences.js"></script>
     <style>
-        html,
         body {
-            font-family: 'Open Sans'
+            padding: 13pt;
+        }
+
+        form {}
+
+        form select {
+            min-width: 120px;
+        }
+
+        form label::after {
+            content: " ";
         }
     </style>
 </head>
@@ -17,6 +27,9 @@
 <body>
     <h2>Coast Browser Settings</h2>
     <form>
+        <h3>Theming</h3>
+        <label>Theme:</label>
+        <select name="theme"></select>
     </form>
 </body>
 

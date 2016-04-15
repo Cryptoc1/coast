@@ -18,35 +18,31 @@ window.onload = function() {
 
     coast = new Coast()
 
-
-    var nav = document.querySelector('.navigation-bar')
-    var omnibar = document.querySelector('.omnibar')
-
     if (preferences.get('homePage')) {
         coast.createTab(new URL(preferences.get('homePage')).href)
     } else {
         coast.createTab('coast:new-tab')
     }
 
-    omnibar.onmouseover = function(e) {
-        omnibar.placeholder = omnibar.getAttribute('coast-original-url')
+    coast.omnibar.onmouseover = function(e) {
+        coast.omnibar.placeholder = coast.activeView.getAttribute('coast-original-url')
     }
 
-    omnibar.onmouseout = function(e) {
-        omnibar.placeholder = omnibar.getAttribute('coast-url-host')
+    coast.omnibar.onmouseout = function(e) {
+        coast.omnibar.placeholder = coast.activeView.getAttribute('coast-url-host')
     }
 
-    omnibar.onfocus = function(e) {
-        omnibar.value = omnibar.getAttribute('coast-original-url') || ""
-        omnibar.select()
+    coast.omnibar.onfocus = function(e) {
+        coast.omnibar.value = coast.activeView.getAttribute('coast-original-url') || ""
+        coast.omnibar.select()
     }
 
-    omnibar.onblur = function(e) {
-        omnibar.placeholder = omnibar.getAttribute('coast-url-host')
-        omnibar.value = ""
+    coast.omnibar.onblur = function(e) {
+        coast.omnibar.placeholder = coast.activeView.getAttribute('coast-url-host')
+        coast.omnibar.value = ""
     }
 
-    omnibar.onkeyup = function(e) {
+    coast.omnibar.onkeyup = function(e) {
         var url = e.target.value.toLowerCase()
         if (e.keyCode == 13) {
             coast.activeView.src = new URL(url).href
@@ -76,8 +72,8 @@ window.onload = function() {
         if (e.modifierKey()) {
             switch (e.keyCode) {
                 case 76:
-                    // Focus the omnibar
-                    omnibar.focus()
+                    // Focus the coast.omnibar
+                    coast.omnibar.focus()
                     break
                 case 82:
                     // Reload the webvew
@@ -125,7 +121,10 @@ class Coast {
     }
 
     /*
-        Managing tabs
+        @MARK Managing tabs
+
+        @TODO: make it so you can scroll through tabs if the number of tabs is greater than the amount
+        the width of the app window can fit
     */
     setActiveTab(tabID) {
         this.activeTabID = tabID
@@ -143,7 +142,11 @@ class Coast {
         tab.setAttribute('onclick', 'coast.gotoTab("' + id + '")')
 
         var view = new WebView()
-        view.src = new URL(url).href
+        var url = new URL(url)
+        if (url.preload) {
+            view.preload = url.preload
+        }
+        view.src = url.href
         view.setAttribute('coast-view-id', id)
         view.setViewMargins()
         view.addEventListener('did-finish-load', this.viewDidFinishLoading, false)
@@ -157,27 +160,35 @@ class Coast {
             this.activeTab.setAttribute('active', false)
         }
         this.setActiveTab(id)
+        for (var i = 0; i < this.views.children.length; i++) {
+            this.views.children[i].style.zIndex = 1
+        }
+        this.activeView.style.zIndex = 2
     }
     destroyTab(tabID) {
-        var index
+        var nextActiveTabID
         var children = this.tabbar.children
         if (children.length == 1) {
             remote.getCurrentWindow().close()
         } else {
-            // Calculates the new activeTab
+            /*
+                Calculates the nextActiveTabID
+
+                There is a small bug in here, where if the user uses the 'x' to close a tab,
+                the activeTab will be set to the tab in-front of the one being closed, instead
+                of just closing the tab, and maintaining the currently active tab
+            */
             for (var i = 0; i < children.length; i++) {
                 if (children[i].getAttribute('coast-tab-id') == this.activeTabID) {
-                    index = i - 1
+                    nextActiveTabID = children[((i == 0) ? i + 1 : i - 1)].getAttribute('coast-tab-id')
                 }
             }
-
             this.tabbar.removeChild(document.querySelector('coast-tab[coast-tab-id="' + (tabID || this.activeTabID) + '"]'))
             this.views.removeChild(document.querySelector('webview[coast-view-id="' + (tabID || this.activeTabID) + '"]'))
 
-            this.activeTab = this.tabbar.children[index]
+            this.setActiveTab(nextActiveTabID)
             this.activeTab.setAttribute('active', true)
-            this.activeTabID = this.activeTab.getAttribute('coast-tab-id')
-            this.activeView = document.querySelector('webview[coast-view-id="' + this.activeTabID + '"]')
+            this.updateOmnibar()
         }
     }
 
@@ -193,6 +204,20 @@ class Coast {
         // Put the new view in the front
         this.activeTab.setAttribute('active', true)
         this.activeView.style.zIndex = 2
+
+        this.updateOmnibar()
+    }
+
+    updateOmnibar() {
+        var url = this.activeView.getAttribute('coast-original-url'),
+            host = this.activeView.getAttribute('coast-url-host')
+        var protocol = url.match(/^(?:http(s?))?/ig)[0]
+        if (protocol == "https") {
+            coast.omnibar.setAttribute('secure', true)
+        } else {
+            coast.omnibar.setAttribute('secure', false)
+        }
+        this.omnibar.placeholder = host
     }
 
     /*
@@ -201,14 +226,13 @@ class Coast {
     viewDidFinishLoading(e) {
         var url = e.target.src
         if (coast.isInternalURLPath(url)) {
-            coast.omnibar.setAttribute('coast-original-url', 'coast:' + url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.html')))
-            coast.omnibar.setAttribute('coast-url-host', 'coast')
-            coast.omnibar.placeholder = 'coast'
+            coast.activeView.setAttribute('coast-original-url', 'coast:' + url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.html')))
+            coast.activeView.setAttribute('coast-url-host', 'coast')
         } else {
-            coast.omnibar.setAttribute('coast-original-url', url)
-            coast.omnibar.setAttribute('coast-url-host', tld.getDomain(url))
-            coast.omnibar.placeholder = tld.getDomain(url)
+            coast.activeView.setAttribute('coast-original-url', url)
+            coast.activeView.setAttribute('coast-url-host', tld.getDomain(url))
         }
+        coast.updateOmnibar()
 
         var protocol = url.match(/^(?:http(s?))?/ig)[0]
         if (protocol == "https") {
@@ -260,6 +284,7 @@ class InternalURL {
         if (url.substring(0, 6) != "coast:") {
             url = 'http://google.com/#q=' + encodeURI(url)
         } else {
+            this.preload = "file://" + __dirname + "/internal/js/preloaded.js"
             if (url == "coast:settings") {
                 url = "file://" + __dirname + "/internal/settings.html"
             } else {
