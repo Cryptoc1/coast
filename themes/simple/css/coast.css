@@ -59,9 +59,11 @@ body {
     color: default;
 }
 coast-tabs {
-    /*background: #000;*/
-    width: 100%;
-    overflow-x: auto;
+    float: left;
+    width: 1000%;
+    overflow-x: scroll;
+    height: 24px;
+    overflow-y: hidden;
     display: block;
     text-align: left;
     margin-top: 8px;
@@ -70,8 +72,11 @@ coast-tab {
     background-color: #B0BEC5;
     display: inline-block;
     max-width: 200px;
-    min-width: 100px;
+    min-width: 140px;
     width: auto;
+    height: 18px;
+    max-height: 18px;
+    overflow: hidden;
     border-right-style: solid;
     border-right-color: rgba(128, 128, 128, .35);
     border-right-width: thin;
@@ -79,18 +84,19 @@ coast-tab {
     padding: 3px 8px 3px 8px;
     font-size: 10pt;
     transition: all .45s;
+    cursor: pointer;
 }
 coast-tab a {
+    display: inline;
     text-decoration: none;
     color: inherit;
-}
-coast-tab a {
     font-weight: 100;
     opacity: .65;
     visibility: hidden;
 }
 coast-tab .title {
     margin: 0 4px 0 16px;
+    display: inline;
 }
 coast-tab[active="true"] {
     background-color: #CFD8DC;
@@ -110,4 +116,5 @@ webview {
     width: 100%;
     z-index: 1;
     transition: all .45s;
+    z-index: 1;
 }

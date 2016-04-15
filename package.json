@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/cryptoc1/coast#readme",
   "dependencies": {
+    "express": "^4.13.4",
+    "getport": "^0.1.0",
     "tldjs": "^1.6.2"
   }
 }

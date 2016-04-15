@@ -2,7 +2,7 @@ var remote = require('remote'),
     tld = require('tldjs')
 
 var coast,
-preferences
+    preferences
 
 var Tab = document.registerElement('coast-tab', {
     prototype: Object.create(HTMLElement.prototype)
@@ -10,8 +10,14 @@ var Tab = document.registerElement('coast-tab', {
 
 window.onload = function() {
 
-    coast = new Coast()
     preferences = new Preferences()
+    var link = document.createElement('link')
+    link.href = "themes/" + (preferences.get('theme') || 'simple') + "/css/coast.css"
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+
+    coast = new Coast()
+
 
     var nav = document.querySelector('.navigation-bar')
     var omnibar = document.querySelector('.omnibar')
@@ -23,11 +29,11 @@ window.onload = function() {
     }
 
     omnibar.onmouseover = function(e) {
-        omnibar.placeholder = omnibar.getAttribute('coast-url-host')
+        omnibar.placeholder = omnibar.getAttribute('coast-original-url')
     }
 
     omnibar.onmouseout = function(e) {
-        omnibar.placeholder = omnibar.getAttribute('coast-page-title') || "No Page Title"
+        omnibar.placeholder = omnibar.getAttribute('coast-url-host')
     }
 
     omnibar.onfocus = function(e) {
@@ -36,20 +42,14 @@ window.onload = function() {
     }
 
     omnibar.onblur = function(e) {
-        omnibar.placeholder = omnibar.getAttribute('coast-page-title')
+        omnibar.placeholder = omnibar.getAttribute('coast-url-host')
         omnibar.value = ""
     }
 
     omnibar.onkeyup = function(e) {
         var url = e.target.value.toLowerCase()
         if (e.keyCode == 13) {
-            if (coast.isInternalURL(url)) {
-                // Internal URI
-                coast.activeView.src = new internalURL(url).href
-            } else {
-                // Must be a search or domain
-                coast.activeView.src = new URL(url).href
-            }
+            coast.activeView.src = new URL(url).href
         }
     }
 
@@ -87,7 +87,7 @@ window.onload = function() {
                 case 84:
                     // Open new tab
                     e.preventDefault()
-                    coast.createTab(preferences.get('homePage'))
+                    coast.createTab(preferences.get('homePage') || 'coast:new-tab')
                     break
                 case 87:
                     // Close tab
@@ -119,14 +119,19 @@ class Coast {
         var c = this
         WebView.prototype.setViewMargins = function() {
             var height = c.navigationbar.offsetHeight - 1
-            this.style.height = (window.innerHeight - (height)) + "px"
-            this.style.top = (height) + "px"
+            this.style.height = (window.innerHeight - height) + "px"
+            this.style.top = height + "px"
         }
     }
 
     /*
         Managing tabs
     */
+    setActiveTab(tabID) {
+        this.activeTabID = tabID
+        this.activeTab = document.querySelector('coast-tab[coast-tab-id="' + tabID + '"]')
+        this.activeView = document.querySelector('webview[coast-view-id="' + tabID + '"]')
+    }
     createTab(url) {
         var id = generateHash(24)
         this.activeTabID = id
@@ -135,6 +140,7 @@ class Coast {
         tab.innerHTML = "<a class=\"fa fa-close\" href=\"javascript:coast.destroyTab('" + id + "')\"></a><span class=\"title\">coast:new-tab</span>"
         tab.setAttribute('coast-tab-id', id)
         tab.setAttribute('active', 'true')
+        tab.setAttribute('onclick', 'coast.gotoTab("' + id + '")')
 
         var view = new WebView()
         view.src = new URL(url).href
@@ -142,6 +148,7 @@ class Coast {
         view.setViewMargins()
         view.addEventListener('did-finish-load', this.viewDidFinishLoading, false)
         view.addEventListener('page-title-updated', this.viewPageTitleUpdated, false)
+        view.addEventListener('console-message', this.viewConsoleMessage, false)
 
         this.tabbar.appendChild(tab)
         this.views.appendChild(view)
@@ -149,8 +156,7 @@ class Coast {
         if (this.tabbar.children.length > 1) {
             this.activeTab.setAttribute('active', false)
         }
-        this.activeTab = document.querySelector('coast-tab[coast-tab-id="' + id + '"]')
-        this.activeView = document.querySelector('webview[coast-view-id="' + id + '"]')
+        this.setActiveTab(id)
     }
     destroyTab(tabID) {
         var index
@@ -175,42 +181,57 @@ class Coast {
         }
     }
 
+    // I want to make this more event driven, but I don't know how... :(
+    gotoTab(tabID) {
+        // put the previously active tab down in the z-index and set it the active attribute to false
+        this.activeView.style.zIndex = 1
+        this.activeTab.setAttribute('active', false)
+
+        // set the new active tab
+        this.setActiveTab(tabID)
+
+        // Put the new view in the front
+        this.activeTab.setAttribute('active', true)
+        this.activeView.style.zIndex = 2
+    }
 
     /*
         Helpers for views
     */
     viewDidFinishLoading(e) {
-        // We can use `this.omnibar`, because `this` refers to the webview
-        var omnibar = document.querySelector('.omnibar')
         var url = e.target.src
-        omnibar.setAttribute('coast-original-url', url)
-        omnibar.setAttribute('coast-url-host', tld.getDomain(url))
+        if (coast.isInternalURLPath(url)) {
+            coast.omnibar.setAttribute('coast-original-url', 'coast:' + url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.html')))
+            coast.omnibar.setAttribute('coast-url-host', 'coast')
+            coast.omnibar.placeholder = 'coast'
+        } else {
+            coast.omnibar.setAttribute('coast-original-url', url)
+            coast.omnibar.setAttribute('coast-url-host', tld.getDomain(url))
+            coast.omnibar.placeholder = tld.getDomain(url)
+        }
 
         var protocol = url.match(/^(?:http(s?))?/ig)[0]
         if (protocol == "https") {
-            omnibar.setAttribute('secure', true)
+            coast.omnibar.setAttribute('secure', true)
         } else {
-            omnibar.setAttribute('secure', false)
+            coast.omnibar.setAttribute('secure', false)
         }
-        omnibar.blur()
+        coast.omnibar.blur()
     }
     viewPageTitleUpdated(e) {
-        // We can use `this.omnibar`, because `this` refers to the webview
-        var omnibar = document.querySelector('.omnibar')
-        omnibar.setAttribute('coast-page-title', e.title)
-        omnibar.value = ""
-        omnibar.placeholder = e.title
+        coast.activeTab.querySelector('.title').textContent = e.title
     }
     viewConsoleMessage(e) {
-        // console.log(e.message)
+        console.log(e.message)
     }
 
     // Internal URIs
     isInternalURL(url) {
         return (internalURLs.indexOf(url) != -1) ? true : false
     }
-    renderInternalURL(url) {
-
+    isInternalURLPath(url) {
+        var endpoint = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.html'))
+        return (url.includes(__dirname) && (internalURLs.indexOf('coast:' + endpoint) != -1)) ? true : false
     }
 }
 
@@ -220,15 +241,16 @@ class URL {
         if (coast.isInternalURL(url)) {
             return new InternalURL(url)
         } else {
-        this.protocol = url.match(/^(?:http(s?)\:\/\/)?/ig)[0]
-        if (this.protocol == "" && (tld.isValid(url) && tld.tldExists(url))) {
-            url = 'http://' + encodeURI(url)
-        } else if (this.protocol != "") {
-            url = encodeURI(url)
-        } else {
-            url = 'http://google.com/#q=' + encodeURI(url)
+            this.protocol = url.match(/^((?:http(s?))|(file)\:\/\/)?/ig)[0]
+            if (this.protocol == "" && (tld.isValid(url) && tld.tldExists(url))) {
+                url = 'http://' + encodeURI(url)
+            } else if (this.protocol != "") {
+                url = encodeURI(url)
+            } else {
+                url = 'http://google.com/#q=' + encodeURI(url)
+            }
+            this.href = url
         }
-        this.href = url}
     }
 }
 
@@ -238,7 +260,11 @@ class InternalURL {
         if (url.substring(0, 6) != "coast:") {
             url = 'http://google.com/#q=' + encodeURI(url)
         } else {
-            url = "file://" + __dirname + url.substring(6, url.length)
+            if (url == "coast:settings") {
+                url = "file://" + __dirname + "/internal/settings.html"
+            } else {
+                url = "file://" + __dirname + "/themes/" + (preferences.get('theme') || 'simple') + "/" + url.substring(6, url.length) + ".html"
+            }
         }
         this.href = url
     }
