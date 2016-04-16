@@ -13,7 +13,7 @@ Coast is a theme-able, multi-tabbed "browser" through the power of electron.
     Coast comes with a bunch of keyboard shortcuts to make using the browser quicker and easier.
 
 ## TODO
-- Loader when saving setting
+- Loader in omnibar
 - Add keyboard shortcut listing to `coast:settings`
 - Work on downloads
 - Create Menubar menus

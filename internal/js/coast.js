@@ -8,6 +8,10 @@ var Tab = document.registerElement('coast-tab', {
     prototype: Object.create(HTMLElement.prototype)
 })
 
+var Toast = document.registerElement('coast-toast', {
+    prototype: Object.create(HTMLElement.prototype)
+})
+
 __dirname = __dirname.toLowerCase()
 
 window.onload = function() {
@@ -255,7 +259,7 @@ class Coast {
         // this.openDevTools()
         if (coast.isThemeableInternalURLPath(e.target.src)) {
             this.insertCSS(preferences.get('injectedCSS'))
-            this.executeJavaScript(preferences.get('injectedJavaScript'), false, function (res) {
+            this.executeJavaScript(preferences.get('injectedJavaScript'), false, function(res) {
                 console.log(res)
             })
         }

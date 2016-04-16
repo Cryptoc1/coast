@@ -66,6 +66,37 @@ coast-tabs {
     text-align: left;
     margin-top: 8px;
 }
+coast-toast {
+    display: block;
+    position: fixed;
+    bottom: 4%;
+    left: 40%;
+    width: 18%;
+    text-align: center;
+    font-weight: 600;
+    padding: 1%;
+    border-radius: 3px;
+    background-color: #646464;
+    color: #FAFAFA;
+    box-shadow: 0px 2px 6px #757575;
+    animation: show-toast .45s 1;
+}
+@keyframes show-toast {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes hide-toast {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
 views {
     position: fixed;
     width: 100%;
