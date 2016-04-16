@@ -1,6 +1,6 @@
 ## Screenshots
 
-### "Simple" Theme
+### Simple Theme
 <figure>
 <figcaption>New Tab Page:</figcaption>
 <img src="simple-new-tab.png" width="100%">
@@ -14,7 +14,7 @@
 <img src="simple-https.png" width="100%">
 </figure>
 
-### "Compact" Theme
+### Compact Theme
 <figure>
 <figcaption>Hidden Tabbar:</figcaption>
 <img src="compact-tabbar-hidden.png" width="100%">

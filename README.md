@@ -30,6 +30,7 @@ The following screenshots are with the "simple" theme.
     Coast comes with a bunch of keyboard shortcuts to make using the browser quicker and easier.
 
 ## TODO
+- Reload app when settings are changed
 - Loader in omnibar
 - Add keyboard shortcut listing to `coast:settings`
 - Work on downloads
