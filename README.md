@@ -1,6 +1,23 @@
 # Coast
 Coast is a theme-able, multi-tabbed "browser" through the power of electron.
 
+## Screenshots
+All screenshots can be found in [screenshots.md](/screenshots/screenshots.md)
+
+The following screenshots are with the "simple" theme.
+<figure>
+<img src="screenshots/simple-new-tab.png" width="100%">
+<figcaption>New tab page</figcaption>
+</figure>
+<figure>
+<img src="screenshots/simple-multiple-tabs.png" width="100%">
+<figcaption>Multiple tabs</figcaption>
+</figure>
+<figure>
+<img src="screenshots/simple-https.png" width="100%">
+<figcaption>Green omnibar texts on HTTPS connections</figcaption>
+</figure>
+
 ## Features
 - Theme-able:
 
@@ -19,4 +36,5 @@ Coast is a theme-able, multi-tabbed "browser" through the power of electron.
 - Create Menubar menus
 - Create context menus
 - In settings, make it so certain CSS/JS can be injected into certain websites
+- Suggestions when typing in the omnibar
 - Adblock filtering?

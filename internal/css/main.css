@@ -76,9 +76,9 @@ coast-toast {
     font-weight: 600;
     padding: 1%;
     border-radius: 3px;
-    background-color: #646464;
-    color: #FAFAFA;
-    box-shadow: 0px 2px 6px #757575;
+    background-color: #CFD8DC;
+    /*color: #FAFAFA;*/
+    box-shadow: 0px 2px 6px #9E9E9E;
     animation: show-toast .45s 1;
 }
 @keyframes show-toast {
