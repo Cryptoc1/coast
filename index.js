@@ -1,6 +1,7 @@
-var electron = require('electron')
-var app = electron.app
-var BrowserWindow = electron.BrowserWindow
+var electron = require('electron'),
+    ipc = electron.ipcMain,
+    app = electron.app,
+    BrowserWindow = electron.BrowserWindow
 
 var mainWindow = null
 
@@ -39,5 +40,9 @@ app.on('ready', function() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null
+    })
+
+    ipc.on('reload-request', function(e, message) {
+        mainWindow.webContents.reload()
     })
 })

@@ -1,4 +1,5 @@
 var preferences = require('../lib/preferences.js')(),
+    ipc = require('electron').ipcRenderer,
     fs = require('fs')
 
 window.onload = function() {
@@ -50,4 +51,6 @@ function saveSettings() {
             document.body.removeChild(toast)
         }, 450)
     }, 2000)
+
+    ipc.send('reload-request')
 }

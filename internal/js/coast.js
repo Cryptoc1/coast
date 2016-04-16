@@ -1,4 +1,6 @@
-var remote = require('remote'),
+var electron = require('electron'),
+    remote = electron.remote,
+    ipc = electron.ipcRenderer,
     preferences = require('./lib/preferences.js')(),
     tld = require('tldjs')
 
