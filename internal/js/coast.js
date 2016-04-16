@@ -136,6 +136,7 @@ class Coast {
     constructor() {
         this.navigationbar = document.querySelector('.navigation-bar')
         this.omnibar = document.querySelector('.omnibar')
+        this.loader = document.querySelector('i.loader')
         this.tabbar = document.querySelector('coast-tabs')
         this.views = document.querySelector('views')
         this.views.style.height = (window.innerHeight - this.navigationbar.height) + "px"
@@ -147,7 +148,7 @@ class Coast {
     }
 
     /*
-        @MARK Managing tabs
+        Managing tabs
 
         @TODO: make it so you can scroll through tabs if the number of tabs is greater than the amount
         the width of the app window can fit
@@ -162,9 +163,6 @@ class Coast {
         this.activeView = document.querySelector('webview[coast-view-id="' + tabID + '"]')
 
         // I strongly debated including this part, so it might break things...
-        /*for (var i = 0; i < this.views.children.length; i++) {
-            this.views.children[i].style.zIndex = 1
-        }*/
         this.activeView.style.zIndex = 2
         this.activeTab.setAttribute('active', true)
     }
@@ -187,9 +185,12 @@ class Coast {
         view.setAttribute('coast-url-host', "Loading...")
 
         view.addEventListener('dom-ready', this.viewIsReady, false)
+        view.addEventListener('did-fail-load', this.viewDidFailLoad, false)
+        view.addEventListener('did-start-loading', this.viewDidStartLoading, false)
         view.addEventListener('did-finish-load', this.viewDidFinishLoading, false)
         view.addEventListener('page-title-updated', this.viewPageTitleUpdated, false)
         view.addEventListener('console-message', this.viewConsoleMessage, false)
+
         view.setViewMargins()
 
         this.tabbar.appendChild(tab)
@@ -266,7 +267,17 @@ class Coast {
             })
         }
     }
+    viewDidFailLoad(e) {
+        console.log(e)
+    }
+    viewDidStartLoading(e) {
+        coast.loader.className = "fa fa-circle-o-notch loader"
+        coast.loader.style.animation = 'start-loading 1s infinite linear'
+    }
     viewDidFinishLoading(e) {
+        coast.loader.className = "fa fa-check loader"
+        coast.loader.style.animation = 'stop-loading .45s ease-in'
+
         var url = e.target.src
         if (coast.isInternalURLPath(url)) {
             coast.activeView.setAttribute('coast-original-url', 'coast:' + url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.html')))

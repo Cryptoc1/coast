@@ -30,9 +30,8 @@ The following screenshots are with the "simple" theme.
     Coast comes with a bunch of keyboard shortcuts to make using the browser quicker and easier.
 
 ## TODO
-- Loader in omnibar
 - Add keyboard shortcut listing to `coast:settings`
-- Work on downloads
+- Make tabbar scrollable
 - Create Menubar menus
 - Create context menus
 - In settings, make it so certain CSS/JS can be injected into certain websites

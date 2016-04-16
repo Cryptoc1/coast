@@ -38,6 +38,36 @@
 .omnibar::selection {
     color: default;
 }
+i.loader {
+    font-size: 12pt;
+    margin-left: -20pt;
+    color: rgba(54, 54, 54, .5);
+    /*visibility: hidden;*/
+    opacity: 0;
+    animation: start-loading 2s infinite linear;
+}
+@keyframes start-loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(360deg);
+    }
+}
+@keyframes stop-loading {
+    0% {
+        opacity: 1;
+        transform: rotate(360deg);
+    }
+    50% {
+        opacity: .3;
+    }
+    100% {
+        transform: rotate(360deg);
+        opacity: 0;
+    }
+}
 coast-tabs {
     float: left;
     width: 100%;
