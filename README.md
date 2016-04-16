@@ -7,17 +7,17 @@ All screenshots can be found in [screenshots.md](/screenshots/screenshots.md)
 The following screenshots are with the "simple" theme.
 <figure>
 <figcaption>New tab page</figcaption>
-<img src="screenshots/simple-new-tab.png" width="80%">
+<img src="screenshots/simple-new-tab.png" width="100%">
 </figure>
 <figure>
 <figcaption>Multiple tabs</figcaption>
 
-<img src="screenshots/simple-multiple-tabs.png" width="80%">
+<img src="screenshots/simple-multiple-tabs.png" width="100%">
 </figure>
 <figure>
 <figcaption>Green omnibar texts on HTTPS connections</figcaption>
 
-<img src="screenshots/simple-https.png" width="80%">
+<img src="screenshots/simple-https.png" width="100%">
 </figure>
 
 ## Features
