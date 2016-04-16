@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Coast Internal URLs</title>
+    <link href="css/main.css" rel="stylesheet">
+    <script src="js/internal-urls.js"></script>
+    <style>
+        html,
+        body {
+            font-family: monospace;
+            font-weight: 600;
+            padding-left: 8pt;
+        }
+
+        h2 {
+            font-family: 'Open Sans', Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        ol li {
+            padding: 0;
+            margin: 0;
+            text-indent: 0;
+            list-style: none;
+            margin: 4pt 0 4pt 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Coast Internal URLs</h2>
+    <ol>
+        <script>
+            internalURLs.map(function(url) {
+                document.write('<li><a href="' + url + '">' + url + '</a></li>')
+            })
+        </script>
+    </ol>
+</body>
+
+</html>

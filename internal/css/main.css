@@ -24,11 +24,10 @@ body {
     padding: 8px 0 8px 0;
     background-color: #CFD8DC;
     text-align: center;
-    z-index: 2;
+    z-index: 3;
     position: fixed;
     top: 0;
     left: 0;
-    /*box-shadow: 0px 2px 6px #BDBDBD;*/
     border-bottom-style: solid;
     border-bottom-color: rgba(128, 128, 128, .35);
     border-bottom-width: thin;
@@ -75,9 +74,9 @@ views {
     left: 0;
 }
 webview {
+    background-color: #FAFAFA;
     position: fixed;
     width: 100%;
     z-index: 1;
     transition: all .45s;
-    z-index: 1;
 }

@@ -27,12 +27,6 @@ app.on('ready', function() {
         minHeight: 480
     })
 
-    /*
-    console.log("Starting internal server")
-    var server = eapp.listen(process.env.PORT || 5000, function() {
-        console.log("Listening at http://0.0.0.0:%d", server.address().port)
-    })*/
-
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/index.html')
 
@@ -47,34 +41,3 @@ app.on('ready', function() {
         mainWindow = null
     })
 })
-
-/*
-    Microserver for hosting the internal urls
-
-var express = require('express'),
-    fs = require('fs')
-var eapp = express()
-var preferences = require('./lib/preferences.js')()
-eapp.use(express.static('themes/' + preferences.get('theme')))
-eapp.use(function(req, res, next) {
-    res.render = function(name) {
-        console.log('themes/' + preferences.get('theme') + "/" + name + ".html")
-        fs.readFile('themes/' + preferences.get('theme') + '/' + name + '.html', 'utf8', function (err, data) {
-            if (err) {
-                res.send("Error reading file")
-            } else {
-                res.send(data)
-            }
-        })
-    }
-    next()
-})
-
-eapp.get('/new-tab', function(req, res) {
-    res.render('new-tab')
-})
-
-eapp.get('/settings', function(req, res) {
-    res.render('settings')
-})
-*/

@@ -3,34 +3,109 @@
 
 <head>
     <title>Coast Settings</title>
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
-    <script src="preferences.js"></script>
     <style>
+        html,
         body {
-            padding: 13pt;
+            background-color: #FAFAFA;
+            overflow: auto;
+        }
+
+        body {
+            padding: 0 2% 0 2%;
+            width: 96%;
+            font-size: 12pt;
         }
 
         form {}
 
-        form select {
+        form * {
             min-width: 120px;
         }
 
+        form fieldset {
+            border-radius: 3px;
+            margin: 8pt 0 8pt 0;
+            border: solid thin #BDBDBD;
+            border: none;
+            padding: 0 12pt 18pt 12pt;
+        }
+
+        form label {
+            display: block;
+            margin: 10pt 0 6pt 0;
+            font-weight: 600;
+        }
+
         form label::after {
-            content: " ";
+            content: "";
+            margin-right: 6pt;
+        }
+
+        form description {
+            display: block;
+            font-size: 10pt;
+            max-width: 360px;
+            margin-bottom: 6pt;
+            color: #757575;
+        }
+
+        form input,
+        form select,
+        form textarea,
+        form button {
+            outline: none;
+            font-size: 11pt;
+            border: solid thin #BDBDBD;
+            border-radius: 3px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        form *:disabled {
+            cursor: default;
+        }
+
+        form input {
+            width: 200px;
+            padding: 4pt;
+        }
+
+        form select {}
+
+        form textarea {
+            display: block;
+            min-width: 400px;
+            min-height: 240px;
         }
     </style>
+    <script src="js/settings.js"></script>
 </head>
 
 <body>
-    <h2>Coast Browser Settings</h2>
-    <form>
-        <h3>Theming</h3>
-        <label>Theme:</label>
-        <select name="theme"></select>
+    <h1>Coast Browser Settings</h1>
+    <form name="settings" action="javascript:saveSettings()">
+        <fieldset>
+            <h2>General Settings</h2>
+            <label>Home Page:</label>
+            <input name="homePage" type="text" placeholder="coast:new-tab">
+        </fieldset>
+        <fieldset>
+            <h2>Theming</h2>
+            <label>Theme:</label>
+            <select name="theme" required></select>
+            <label>Injected CSS:</label>
+            <description>CSS entered into the textbox will get injected into interal URLs (like <code>coast:new-tab</code>)</description>
+            <textarea name="injectedCSS"></textarea>
+            <label>Injected JavaScript:</label>
+            <description>JavaScript entered into the textbox will get injected into interal URLs (like <code>coast:new-tab</code>)</description>
+            <textarea name="injectedJavaScript"></textarea>
+        </fieldset>
+        <button type="submit">Save</button>
     </form>
+    <br>
 </body>
 
 </html>

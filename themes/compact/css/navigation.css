@@ -1,0 +1,125 @@
+.navigation-bar {
+    width: 100%;
+    height: auto;
+    padding: 8px 0 0 0;
+    background-color: #CFD8DC;
+    text-align: center;
+    /*z-index: 2;*/
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-bottom-style: solid;
+    border-bottom-color: rgba(128, 128, 128, .35);
+    border-bottom-width: thin;
+    transition: all .45s;
+}
+.omnibar {
+    background-color: #FAFAFA;
+    width: 60%;
+    border: none;
+    outline: none;
+    border-radius: 3px;
+    font-size: 12pt;
+    padding: 6pt 12pt 6pt 12pt;
+    margin-top: -3px;
+    box-shadow: 0px 2px 6px #BDBDBD;
+    text-align: center;
+    font-weight: 600;
+    color: rgba(54, 54, 54, .94) !important;
+}
+.omnibar::-webkit-input-placeholder {
+    letter-spacing: 1pt;
+    color: rgba(96, 96, 96, .6);
+    transition: all .45s;
+}
+.omnibar[secure="true"]::-webkit-input-placeholder {
+    color: #4CAF50;
+}
+.omnibar::selection {
+    color: default;
+}
+coast-tabs {
+    float: left;
+    width: 100%;
+    height: 4px;
+    overflow: hidden;
+    display: block;
+    text-align: left;
+    margin-top: 2px;
+    border-top-style: solid;
+    border-top-color: rgba(128, 128, 128, .35);
+    border-top-width: thin;
+    border: none;
+    animation: shrink-tabs .45s 1;
+}
+.navigation-bar:hover coast-tabs {
+    animation: expand-tabs .45s 1;
+    height: 24px;
+}
+@keyframes shrink-tabs {
+    0% {
+        height: 24px;
+    }
+    100% {
+        height: 4px;
+    }
+}
+@keyframes expand-tabs {
+    0% {
+        height: 4px;
+    }
+    100% {
+        height: 24px;
+    }
+}
+coast-tab {
+    background-color: #B0BEC5;
+    display: inline-block;
+    max-width: 200px;
+    min-width: 140px;
+    width: auto;
+    height: 18px;
+    max-height: 18px;
+    overflow: hidden;
+    border-right-style: solid;
+    border-right-color: rgba(128, 128, 128, .35);
+    border-right-width: thin;
+    border-top: none;
+    padding: 3px 8px 3px 8px;
+    font-size: 10pt;
+    transition: all .45s;
+    cursor: pointer;
+}
+coast-tab a {
+    display: inline;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 100;
+    opacity: .65;
+    visibility: hidden;
+}
+coast-tab .title {
+    margin: 0 4px 0 16px;
+    display: inline;
+}
+coast-tab[active="true"] {
+    background-color: #CFD8DC;
+}
+coast-tab[active="true"] a {
+    visibility: visible;
+}
+coast-tab:hover a {
+    visibility: visible;
+}
+views {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+webview {
+    position: fixed;
+    width: 100%;
+    transition: all .45s;
+}

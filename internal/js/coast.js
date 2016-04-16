@@ -1,28 +1,25 @@
 var remote = require('remote'),
+    preferences = require('./lib/preferences.js')(),
     tld = require('tldjs')
 
-var coast,
-    preferences
+var coast
 
 var Tab = document.registerElement('coast-tab', {
     prototype: Object.create(HTMLElement.prototype)
 })
 
+__dirname = __dirname.toLowerCase()
+
 window.onload = function() {
 
-    preferences = new Preferences()
     var link = document.createElement('link')
-    link.href = "themes/" + (preferences.get('theme') || 'simple') + "/css/coast.css"
+    link.href = "themes/" + (preferences.get('theme') || 'simple') + "/css/navigation.css"
     link.rel = 'stylesheet'
     document.head.appendChild(link)
 
     coast = new Coast()
 
-    if (preferences.get('homePage')) {
-        coast.createTab(new URL(preferences.get('homePage')).href)
-    } else {
-        coast.createTab('coast:new-tab')
-    }
+    coast.createTab(new URL(preferences.get('homePage') || 'coast:new-tab').href)
 
     coast.omnibar.onmouseover = function(e) {
         coast.omnibar.placeholder = coast.activeView.getAttribute('coast-original-url')
@@ -30,6 +27,7 @@ window.onload = function() {
 
     coast.omnibar.onmouseout = function(e) {
         coast.omnibar.placeholder = coast.activeView.getAttribute('coast-url-host')
+        coast.omnibar.value = ""
     }
 
     coast.omnibar.onfocus = function(e) {
@@ -45,7 +43,9 @@ window.onload = function() {
     coast.omnibar.onkeyup = function(e) {
         var url = e.target.value.toLowerCase()
         if (e.keyCode == 13) {
-            coast.activeView.src = new URL(url).href
+            var url = new URL(url)
+            coast.activeView.setAttribute('nodeintegration', url.nodeIntegration || false)
+            coast.activeView.src = url.href
         }
     }
 
@@ -63,8 +63,7 @@ window.onload = function() {
     })
 
     window.onresize = function() {
-        var view = coast.activeView
-        view.style.height = (window.innerHeight - (coast.navigationbar.offsetHeight - 1)) + "px"
+        coast.activeView.setViewMargins()
     }
 
     window.onkeydown = function(e) {
@@ -92,6 +91,28 @@ window.onload = function() {
                     break
                 case 188:
                     // Open settings
+                    e.preventDefault()
+                    coast.createTab('coast:settings')
+                    break
+                case 221:
+                    // Move activeTab to the right
+                    if (e.shiftKey) {
+                        var tabs = [].slice.call(coast.tabbar.children)
+                        var i = tabs.indexOf(coast.activeTab)
+                        if (!(i + 1 > tabs.length - 1)) {
+                            coast.gotoTab(tabs[i + 1].getAttribute('coast-tab-id'))
+                        }
+                    }
+                    break
+                case 219:
+                    // Move activeTab to the left
+                    if (e.shiftKey) {
+                        var tabs = [].slice.call(coast.tabbar.children)
+                        var i = tabs.indexOf(coast.activeTab)
+                        if (!(i - 1 < 0)) {
+                            coast.gotoTab(tabs[i - 1].getAttribute('coast-tab-id'))
+                        }
+                    }
                     break
             }
         }
@@ -112,9 +133,8 @@ class Coast {
         this.tabbar = document.querySelector('coast-tabs')
         this.views = document.querySelector('views')
         this.views.style.height = (window.innerHeight - this.navigationbar.height) + "px"
-        var c = this
         WebView.prototype.setViewMargins = function() {
-            var height = c.navigationbar.offsetHeight - 1
+            var height = coast.navigationbar.offsetHeight - 1
             this.style.height = (window.innerHeight - height) + "px"
             this.style.top = height + "px"
         }
@@ -127,9 +147,20 @@ class Coast {
         the width of the app window can fit
     */
     setActiveTab(tabID) {
+        if (this.activeView) {
+            this.activeView.style.zIndex = 1
+            this.activeTab.setAttribute('active', false)
+        }
         this.activeTabID = tabID
         this.activeTab = document.querySelector('coast-tab[coast-tab-id="' + tabID + '"]')
         this.activeView = document.querySelector('webview[coast-view-id="' + tabID + '"]')
+
+        // I strongly debated including this part, so it might break things...
+        /*for (var i = 0; i < this.views.children.length; i++) {
+            this.views.children[i].style.zIndex = 1
+        }*/
+        this.activeView.style.zIndex = 2
+        this.activeTab.setAttribute('active', true)
     }
     createTab(url) {
         var id = generateHash(24)
@@ -141,17 +172,19 @@ class Coast {
         tab.setAttribute('active', 'true')
         tab.setAttribute('onclick', 'coast.gotoTab("' + id + '")')
 
-        var view = new WebView()
         var url = new URL(url)
-        if (url.preload) {
-            view.preload = url.preload
-        }
+        var view = new WebView()
         view.src = url.href
+        view.setAttribute('nodeintegration', url.nodeIntegration || false)
         view.setAttribute('coast-view-id', id)
-        view.setViewMargins()
+        view.setAttribute('coast-original-url', "Loading...")
+        view.setAttribute('coast-url-host', "Loading...")
+
+        view.addEventListener('dom-ready', this.viewIsReady, false)
         view.addEventListener('did-finish-load', this.viewDidFinishLoading, false)
         view.addEventListener('page-title-updated', this.viewPageTitleUpdated, false)
         view.addEventListener('console-message', this.viewConsoleMessage, false)
+        view.setViewMargins()
 
         this.tabbar.appendChild(tab)
         this.views.appendChild(view)
@@ -160,10 +193,6 @@ class Coast {
             this.activeTab.setAttribute('active', false)
         }
         this.setActiveTab(id)
-        for (var i = 0; i < this.views.children.length; i++) {
-            this.views.children[i].style.zIndex = 1
-        }
-        this.activeView.style.zIndex = 2
     }
     destroyTab(tabID) {
         var nextActiveTabID
@@ -187,7 +216,6 @@ class Coast {
             this.views.removeChild(document.querySelector('webview[coast-view-id="' + (tabID || this.activeTabID) + '"]'))
 
             this.setActiveTab(nextActiveTabID)
-            this.activeTab.setAttribute('active', true)
             this.updateOmnibar()
         }
     }
@@ -203,14 +231,14 @@ class Coast {
 
         // Put the new view in the front
         this.activeTab.setAttribute('active', true)
-        this.activeView.style.zIndex = 2
 
         this.updateOmnibar()
     }
 
     updateOmnibar() {
-        var url = this.activeView.getAttribute('coast-original-url'),
-            host = this.activeView.getAttribute('coast-url-host')
+        // If a tab is closed before the webview completes its request, url = "Loading"
+        var url = this.activeView.getAttribute('coast-original-url') || "Loading...",
+            host = this.activeView.getAttribute('coast-url-host') || "Loading..."
         var protocol = url.match(/^(?:http(s?))?/ig)[0]
         if (protocol == "https") {
             coast.omnibar.setAttribute('secure', true)
@@ -223,6 +251,15 @@ class Coast {
     /*
         Helpers for views
     */
+    viewIsReady(e) {
+        // this.openDevTools()
+        if (coast.isThemeableInternalURLPath(e.target.src)) {
+            this.insertCSS(preferences.get('injectedCSS'))
+            this.executeJavaScript(preferences.get('injectedJavaScript'), false, function (res) {
+                console.log(res)
+            })
+        }
+    }
     viewDidFinishLoading(e) {
         var url = e.target.src
         if (coast.isInternalURLPath(url)) {
@@ -249,13 +286,40 @@ class Coast {
         console.log(e.message)
     }
 
-    // Internal URIs
+    // Internal URL helpers
+    // @TODO: Consider combining isInternalURL and isInternalURLPath into just isInternalURL
     isInternalURL(url) {
         return (internalURLs.indexOf(url) != -1) ? true : false
     }
     isInternalURLPath(url) {
         var endpoint = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.html'))
         return (url.includes(__dirname) && (internalURLs.indexOf('coast:' + endpoint) != -1)) ? true : false
+    }
+    isThemeableInternalURL(url) {
+        if (this.isInternalURL(url)) {
+            switch (url.substring(6, url.length)) {
+                case 'new-tab':
+                    return true
+                    break
+                default:
+                    return false
+            }
+        } else {
+            return false
+        }
+    }
+    isThemeableInternalURLPath(url) {
+        if (this.isInternalURLPath(url)) {
+            switch (url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.html'))) {
+                case 'new-tab':
+                    return true
+                    break
+                default:
+                    return false
+            }
+        } else {
+            return false
+        }
     }
 }
 
@@ -284,11 +348,21 @@ class InternalURL {
         if (url.substring(0, 6) != "coast:") {
             url = 'http://google.com/#q=' + encodeURI(url)
         } else {
-            this.preload = "file://" + __dirname + "/internal/js/preloaded.js"
-            if (url == "coast:settings") {
-                url = "file://" + __dirname + "/internal/settings.html"
-            } else {
-                url = "file://" + __dirname + "/themes/" + (preferences.get('theme') || 'simple') + "/" + url.substring(6, url.length) + ".html"
+            this.nodeIntegration = true
+            var endpoint = url.substring(6, url.length)
+            switch (endpoint) {
+                case 'settings':
+                    url = "file://" + __dirname + "/internal/" + endpoint + ".html"
+                    break
+                case 'about':
+                    url = "file://" + __dirname + "/internal/" + endpoint + ".html"
+                    break
+                case 'internal-urls':
+                    url = "file://" + __dirname + "/internal/" + endpoint + ".html"
+                    break
+                default:
+                    url = "file://" + __dirname + "/themes/" + (preferences.get('theme') || 'simple') + "/" + endpoint + ".html"
+
             }
         }
         this.href = url

@@ -1,6 +1,8 @@
 var internalURLs = [
-    "coast:new-tab",
-    "coast:settings",
+    "coast:about",
+    "coast:downloads",
     "coast:history",
-    "coast:downloads"
+    "coast:internal-urls",
+    "coast:new-tab",
+    "coast:settings"
 ]
