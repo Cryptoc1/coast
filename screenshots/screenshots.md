@@ -31,5 +31,5 @@
 </figure>
 <figure>
 <figcaption>Hovering Over Omnibar Reveals Full Address</figcaption>
-<img src="monibar-hover.png" width="100%">
+<img src="omnibar-hover.png" width="100%">
 </figure>
