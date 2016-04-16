@@ -5,18 +5,12 @@ Coast is a theme-able, multi-tabbed "browser" through the power of electron.
 All screenshots can be found in [screenshots.md](/screenshots/screenshots.md)
 
 The following screenshots are with the "simple" theme.
-<figure>
-<img src="screenshots/simple-new-tab.png" width="100%">
-<figcaption>New tab page</figcaption>
-</figure>
-<figure>
-<img src="screenshots/simple-multiple-tabs.png" width="100%">
-<figcaption>Multiple tabs</figcaption>
-</figure>
-<figure>
-<img src="screenshots/simple-https.png" width="100%">
-<figcaption>Green omnibar texts on HTTPS connections</figcaption>
-</figure>
+New Tab:
+<img src="screenshots/simple-new-tab.png" width="80%">
+Multiple Open Tabs:
+<img src="screenshots/simple-multiple-tabs.png" width="80%">
+Green Omnibar Text on HTTPS Connections:
+<img src="screenshots/simple-https.png" width="80%">
 
 ## Features
 - Theme-able:
