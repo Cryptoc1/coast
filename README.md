@@ -31,6 +31,7 @@ The following screenshots are with the "simple" theme.
 
 ## TODO
 - Add keyboard shortcut listing to `coast:settings`
+- Add `view-source` support
 - Make tabbar scrollable
 - Create Menubar menus
 - Create context menus
